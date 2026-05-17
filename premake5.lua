@@ -71,6 +71,11 @@ project "Hazel"
 			"GLFW_INCLUDE_NONE"
 		}
 
+		postbuildcommands
+		{
+			 ("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
+		}
+
 	filter "configurations:Debug"
 		defines "HZ_DEBUG"
 		buildoptions "/MDd"
@@ -120,11 +125,6 @@ project "Sandbox"
 		defines
 		{
 			"HZ_PLATFORM_WINDOWS"
-		}
-
-		postbuildcommands
-		{
-			 "{COPYFILE} ../bin/" .. outputdir .. "/Hazel/Hazel.dll ../bin/" .. outputdir .. "/Sandbox"
 		}
 
 	filter "configurations:Debug"
