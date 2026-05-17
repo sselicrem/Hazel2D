@@ -92,11 +92,19 @@ namespace Hazel {
 					}
 					case GLFW_REPEAT:
 					{
-						KeyPressedEvent event(key, 1	);
+						KeyPressedEvent event(key, 1);
 						data.EventCallback(event);
 						break;
 					}
 				}
+			});
+
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int key)
+			{
+				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+
+				KeyTypedEvent event(key);
+				data.EventCallback(event);
 			});
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
