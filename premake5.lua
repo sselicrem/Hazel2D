@@ -33,8 +33,8 @@ project "Hazel"
 
 	pchheader "hzpch.h"
 	pchsource "Hazel/src/hzpch.cpp"
-
 	buildoptions "/utf-8"
+
 	files
 	{
 		"%{prj.name}/src/**.h",
@@ -58,8 +58,7 @@ project "Hazel"
 		"GLFW",
 		"Glad",
 		"imgui",
-		"opengl32.lib",
-		"dwmapi.lib"
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
@@ -98,7 +97,7 @@ project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
-	staticruntime "off"	
+	staticruntime "off"
 	buildoptions "/utf-8"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -114,6 +113,7 @@ project "Sandbox"
 	{
 		"Hazel/vendor/spdlog/include",
 		"Hazel/src",
+		"Hazel/vendor",
 		"%{IncludeDir.glm}"
 	}
 
