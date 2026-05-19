@@ -1,8 +1,6 @@
 #include "hzpch.h"
 #include "Application.h"
 
-#include "Hazel/Log.h"
-
 #include <glad/glad.h>
 
 #include "Input.h"
