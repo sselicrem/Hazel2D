@@ -37,6 +37,7 @@ namespace Hazel {
 		std::unique_ptr<Window> m_Window;
 
 		bool m_Running = true;
+		float m_LastFrameTime = 0.f;
 	private:
 		static Application* s_Instance;
 	};
