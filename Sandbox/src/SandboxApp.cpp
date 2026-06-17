@@ -11,7 +11,7 @@ class ExampleLayer : public Hazel::Layer
 {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.f, 0.f, 0.f), m_SquarePosition(0.f)
+		: Layer("Example"), m_CameraController(1280.f/720.f, true), m_SquarePosition(0.f)
 	{
 		m_VertexArray.reset(Hazel::VertexArray::Create());
 
@@ -144,41 +144,14 @@ public:
 
 	void OnUpdate(Hazel::Timestep ts) override
 	{
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
-		{
-			m_CameraPosition.x -= m_CameraSpeed * ts;
-		}
-		else if (Hazel::Input::IsKeyPressed(HZ_KEY_RIGHT))
-		{
-			m_CameraPosition.x += m_CameraSpeed * ts;
-		}
+		// Update
+		m_CameraController.OnUpdate(ts);
 
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_UP))
-		{
-			m_CameraPosition.y += m_CameraSpeed * ts;
-		}
-		else if (Hazel::Input::IsKeyPressed(HZ_KEY_DOWN))
-		{
-			m_CameraPosition.y -= m_CameraSpeed * ts;
-		}
-
-
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_A))
-		{ 
-			m_CameraRotation += m_CameraRotationSpeed * ts;
-		}
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_D))
-		{
-			m_CameraRotation -= m_CameraRotationSpeed * ts;
-		}
-
+		// Render
 		Hazel::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
 		Hazel::RenderCommand::Clear();
 
-		m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetRotation(m_CameraRotation);
-
-		Hazel::Renderer::BeginScene(m_Camera);
+		Hazel::Renderer::BeginScene(m_CameraController.GetCamera());
 
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -219,6 +192,7 @@ public:
 	void OnEvent(Hazel::Event& event) override
 	{
 		Hazel::EventDispatcher dispatcher(event);
+		m_CameraController.OnEvent(event);
 	}
 private:
 	Hazel::ShaderLibrary m_ShaderLibrary;
@@ -230,13 +204,8 @@ private:
 
 	Hazel::Ref<Hazel::Texture2D> m_Texture, m_ChernoTexture;
 
-	Hazel::OrthographicCamera m_Camera;
+	Hazel::OrthographicCameraController m_CameraController;
 	glm::vec3 m_CameraPosition;
-
-	float m_CameraSpeed = 2.f;
-
-	float m_CameraRotation = 0.0f;
-	float m_CameraRotationSpeed = 180.f;
 
 	glm::vec3 m_SquarePosition;
 	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };

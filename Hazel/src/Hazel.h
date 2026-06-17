@@ -9,8 +9,9 @@
 
 #include "Hazel/Input.h"
 #include "Hazel/KeyCodes.h"
-#include "Hazel/MouseButtonCodes.h"
 #include "Hazel/Events/KeyEvent.h"
+#include "Hazel/MouseButtonCodes.h"
+#include "Hazel/OrthographicCameraController.h"
 
 #include "Hazel/ImGui/ImGuiLayer.h"
 
@@ -23,7 +24,6 @@
 #include "Hazel/Renderer/Texture.h"
 #include "Hazel/Renderer/VertexArray.h"
 
-#include "Hazel/Renderer/OrthographicCamera.h"
 //--------------------------
 
 //--------Entry Point-------
