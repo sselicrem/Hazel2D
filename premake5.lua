@@ -1,17 +1,13 @@
 workspace "Hazel"
 	architecture "x64"
 	startproject "Sandbox"
+	multiprocessorcompile "On"
 
 	configurations
 	{
 		"Debug",
 		"Release",
 		"Dist"
-	}
-
-	flags
-	{
-		"MultiProcessorCompile"
 	}
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
