@@ -13,6 +13,8 @@ namespace Hazel {
 
 	Application::Application()
 	{
+		HZ_PROFILE_FUNCTION();
+
 		HZ_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
@@ -23,26 +25,45 @@ namespace Hazel {
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
-	};
+	}
+
+	Application::~Application()
+	{
+		HZ_PROFILE_FUNCTION();
+
+		Renderer::Shutdown();
+	}
 
 	void Application::Run()
 	{
+		HZ_PROFILE_FUNCTION();
+
 		while (m_Running)
 		{
+			HZ_PROFILE_SCOPE("RunLoop");
+
 			float time = (float)glfwGetTime();
 			auto timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
 			if (!m_Minimized)
 			{
-				for (auto layer : m_LayerStack)
-					layer->OnUpdate(timestep);
+				{
+					HZ_PROFILE_SCOPE("LayerStack OnUpdate()");
+
+					for (auto layer : m_LayerStack)
+						layer->OnUpdate(timestep);
+				}
+
+				m_ImGuiLayer->Begin();
+				{
+					HZ_PROFILE_SCOPE("LayerStack OnImGuiRenderer()");
+					for (auto layer : m_LayerStack)
+						layer->OnImGuiRender();
+				}
+				m_ImGuiLayer->End();
 			}
 
-			m_ImGuiLayer->Begin();
-			for (auto layer : m_LayerStack)
-				layer->OnImGuiRender();
-			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
 		}
@@ -50,6 +71,8 @@ namespace Hazel {
 
 	void Application::OnEvent(Event& e)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(HZ_BIND_EVENT_FN(Application::OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(HZ_BIND_EVENT_FN(Application::OnWindowResize));
@@ -64,12 +87,18 @@ namespace Hazel {
 
 	void Application::PushLayer(Layer* layer)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* overlay)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		m_LayerStack.PushOverlay(overlay);
+		overlay->OnAttach();
 	}
 
 	bool Application::OnWindowClose(Event& e)
@@ -80,6 +109,8 @@ namespace Hazel {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)
 		{
 			m_Minimized = true;
