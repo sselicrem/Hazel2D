@@ -1,9 +1,7 @@
 #include "hzpch.h"
 #include "OpenGLTexture.h"
 
-#include "stb_image.h"
-
-#include <glad/glad.h>
+#include <stb_image.h>
 
 namespace Hazel {
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
@@ -22,7 +20,7 @@ namespace Hazel {
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
-	Hazel::OpenGLTexture2D::OpenGLTexture2D(const std::string& path) : m_Path(path)
+	Hazel::OpenGLTexture2D::OpenGLTexture2D	(const std::string& path) : m_Path(path)
 	{
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);

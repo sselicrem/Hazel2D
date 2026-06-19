@@ -1,6 +1,5 @@
 #pragma once
 
-#include "hzpch.h"
 #include "Hazel/Core/Core.h"
 
 namespace Hazel {
@@ -35,7 +34,7 @@ namespace Hazel {
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
-	class HAZEL_API Event
+	class Event
 	{
 	public:
 		virtual EventType GetEventType() const = 0;

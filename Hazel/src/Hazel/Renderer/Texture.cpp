@@ -2,7 +2,7 @@
 #include "Texture.h"
 
 #include "Platform/OpenGL/OpenGLTexture.h"
-#include "Renderer.h"
+#include "Hazel/Renderer/Renderer.h"
 
 namespace Hazel {
 
