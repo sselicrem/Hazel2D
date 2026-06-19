@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Hazel/DebuggingTools/Instrumentor.h"
 #include "Hazel/Core/Log.h"
 
 #ifdef HZ_PLATFORM_WINDOWS

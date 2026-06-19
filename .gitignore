@@ -4,6 +4,9 @@
 bin/
 bin-int/
 # Files
+HazelProfile-Runtime.json
+HazelProfile-Shutdown.json
+HazelProfile-Startup.json
 *.user
 *.sln
 *.vcxproj
