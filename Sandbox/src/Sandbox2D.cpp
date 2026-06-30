@@ -38,11 +38,11 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 	{
 		HZ_PROFILE_SCOPE("Renderer Draw");
 		Hazel::Renderer2D::BeginScene(m_CameraController.GetCamera());
-		//Hazel::Renderer2D::DrawRotatedQuad({ -1.f,0.f }, { 0.5f, 0.5f }, glm::radians(45.f), { 0.8f, 0.8f, 0.3f, 1.f });
+		Hazel::Renderer2D::DrawRotatedQuad({ -2.f, 2.f, 0.0f }, { 0.5f, 0.5f }, 45.f, { 0.8f, 0.8f, 0.3f, 1.f });
 		Hazel::Renderer2D::DrawQuad({ -1.f,0.f }, { 0.5f, 0.5f }, { 0.8f, 0.8f, 0.3f, 1.f });
 		Hazel::Renderer2D::DrawQuad({ 1.f,0.5f }, { 1.25f, 0.5f }, { 0.8f, 0.2f, 0.3f, 1.f });	
-		Hazel::Renderer2D::DrawQuad({ -5.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerboardTexture, 10.0f);
-		Hazel::Renderer2D::DrawQuad({ -0.5f, -0.5f, 0.0f }, { 1.0f, 1.0f }, m_CheckerboardTexture, 20.0f);
+		Hazel::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerboardTexture, 10.0f);
+		Hazel::Renderer2D::DrawRotatedQuad({ 0.f, 0.f, 0.0f }, { 1.0f, 1.0f }, 45.f, m_CheckerboardTexture, 20.f);
 		Hazel::Renderer2D::EndScene();
 	}
 }
