@@ -15,6 +15,7 @@ namespace Hazel {
 		static void Flush();
 
 		//Primitives
+		static void PushQuad(glm::mat4 transform, glm::vec4 color, float textureIndex, float tilingFactor);
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
 
