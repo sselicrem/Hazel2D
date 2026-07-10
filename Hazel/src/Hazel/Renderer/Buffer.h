@@ -51,8 +51,8 @@ namespace Hazel {
 				case Hazel::ShaderDataType::Float2: return 2;
 				case Hazel::ShaderDataType::Float3: return 3;
 				case Hazel::ShaderDataType::Float4: return 4;
-				case Hazel::ShaderDataType::Mat3:	return 3 * 3;
-				case Hazel::ShaderDataType::Mat4:	return 4 * 4;
+				case Hazel::ShaderDataType::Mat3:	return 3;// *3;
+				case Hazel::ShaderDataType::Mat4:	return 4;// *4;
 				case Hazel::ShaderDataType::Int:	return 1;
 				case Hazel::ShaderDataType::Int2:	return 2;
 				case Hazel::ShaderDataType::Int3:	return 3;
