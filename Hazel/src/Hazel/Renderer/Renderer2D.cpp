@@ -4,6 +4,7 @@
 #include "Hazel/Renderer/VertexArray.h"
 #include "Hazel/Renderer/Shader.h"
 #include "Hazel/Renderer/RenderCommand.h"
+#include "Hazel/Renderer/Camera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -107,6 +108,21 @@ namespace Hazel {
 		HZ_PROFILE_FUNCTION();
 
 		delete[] s_Data.QuadVertexBufferBase;
+	}
+
+	void Renderer2D::BeginScene(const Camera& camera, glm::mat4 transform)
+	{
+		HZ_PROFILE_FUNCTION();
+
+		glm::mat4 matProj = camera.GetProjection() * glm::inverse(transform);
+
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", matProj);
+
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.TextureSlotIndex = 1;
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
