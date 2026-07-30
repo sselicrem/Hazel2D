@@ -10,14 +10,8 @@
 
 namespace Hazel {
 
-	static void DoMath(const glm::mat4& transform)
-	{
-
-	}
-
 	Scene::Scene()
 	{
-
 	}
 
 	Scene::~Scene()
@@ -26,6 +20,21 @@ namespace Hazel {
 
 	void Scene::OnUpdate(Timestep ts)
 	{
+		//Scripts Update
+		{
+			m_Registry.view<NativeScriptComponent>().each([=](auto entity, NativeScriptComponent& nsc)
+				{
+					if (!nsc.Instance)
+					{
+						nsc.Instance = nsc.InstantiateFn();
+						nsc.Instance->m_Entity = Entity{ entity, this };
+						nsc.Instance->OnCreate();
+					}
+
+					nsc.Instance->OnUpdate(ts);
+				});
+		}
+
 		Camera* mainCamera = nullptr;
 		glm::mat4* cameraTransform = nullptr;
 		{
