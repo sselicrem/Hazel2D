@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Hazel/Core/Log.h"
 #include "Hazel/Scene/Scene.h"
 
 #include <entt.hpp>
@@ -27,7 +28,7 @@ namespace Hazel
 		template<typename T>
 		T& GetComponent()
 		{
-			HZ_CORE_ASSERT(!HasComponent<T>(), "Entity does not have component!");
+			HZ_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
 			return m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
 		
@@ -40,7 +41,7 @@ namespace Hazel
 		template<typename T>
 		void RemoveComponent()
 		{
-			HZ_CORE_ASSERT(!HasComponent<T>(), "Entity does not have component!");
+			HZ_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 

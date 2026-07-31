@@ -1,3 +1,4 @@
+#include "hzpch.h"
 #include "EditorLayer.h"
 #include <imgui/imgui.h>
 
@@ -59,19 +60,19 @@ namespace Hazel {
 
 				if (camera)
 				{
-					if (Input::IsKeyPressed(KeyCode::A))
+					if (Input::IsKeyPressed(Key::A))
 					{
 						transformComponent.Translation.x -= speed * ts;
 					}
-					if (Input::IsKeyPressed(KeyCode::D))
+					if (Input::IsKeyPressed(Key::D))
 					{
 						transformComponent.Translation.x += speed * ts;
 					}
-					if (Input::IsKeyPressed(KeyCode::W))
+					if (Input::IsKeyPressed(Key::W))
 					{
 						transformComponent.Translation.y += speed * ts;
 					}
-					if (Input::IsKeyPressed(KeyCode::S))
+					if (Input::IsKeyPressed(Key::S))
 					{
 						transformComponent.Translation.y -= speed * ts;
 					}
@@ -214,8 +215,8 @@ namespace Hazel {
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		ImGui::End();
 		ImGui::PopStyleVar();
 

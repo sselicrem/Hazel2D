@@ -301,13 +301,13 @@ namespace Hazel {
 				if (ImGui::DragFloat("FOV", &verticalFov))
 					camera.SetPerspectiveVerticalFOV(glm::radians(verticalFov));
 
-				auto near = camera.GetOrthographicNearClip();
-				if (ImGui::DragFloat("Near", &near))
-					camera.SetPerspectiveNearClip(near);
+				auto nearClip = camera.GetOrthographicNearClip();
+				if (ImGui::DragFloat("Near", &nearClip))
+					camera.SetPerspectiveNearClip(nearClip);
 
-				auto far = camera.GetPerspectiveFarClip();
-				if (ImGui::DragFloat("Far", &far))
-					camera.SetPerspectiveFarClip(far);
+				auto farClip = camera.GetPerspectiveFarClip();
+				if (ImGui::DragFloat("Far", &farClip))
+					camera.SetPerspectiveFarClip(farClip);
 			}
 		});
 

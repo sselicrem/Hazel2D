@@ -1,7 +1,7 @@
 #pragma once
 //for use by Hazel applications
 
-#include "Hazel/Core/Core.h"
+#include "Hazel/Core/Base.h"
 
 #include "Hazel/Core/Application.h"
 #include "Hazel/Core/Log.h"
