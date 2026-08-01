@@ -19,6 +19,8 @@ project "Hazel"
 		"vendor/stb_image/**.cpp",
 		"vendor/glm/glm/**.hpp",
 		"vendor/glm/glm/**.inl",
+		"vendor/ImGuizmo/ImGuizmo.h",
+		"vendor/ImGuizmo/ImGuizmo.cpp"
 	}
 
 	defines
@@ -38,7 +40,8 @@ project "Hazel"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.yaml_cpp}"
+		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links
@@ -50,12 +53,11 @@ project "Hazel"
 		"yaml-cpp"
 	}
 
+	filter "files:vendor/ImGuizmo/**.cpp"
+	flags { "NoPCH" }
+
 	filter "system:windows"
 		systemversion "latest"
-
-		defines
-		{
-		}
 
 	filter "configurations:Debug"
 		defines "HZ_DEBUG"
