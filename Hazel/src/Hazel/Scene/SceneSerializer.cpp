@@ -87,7 +87,7 @@ namespace Hazel {
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
 		out << YAML::BeginMap; // Entity
-		out << YAML::Key << "Entity" << YAML::Value << (uint32_t)entity;
+		out << YAML::Key << "Entity" << YAML::Value << static_cast<uint32_t>(entity);
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -124,7 +124,7 @@ namespace Hazel {
 			out << YAML::Key << "Camera" << YAML::Value;
 			out << YAML::BeginMap; // Camera
 
-			out << YAML::Key << "ProjectionType" << YAML::Value << (int)camera.GetProjectionType();
+			out << YAML::Key << "ProjectionType" << YAML::Value << static_cast<int>(camera.GetProjectionType());
 			out << YAML::Key << "PerspectiveFOV" << YAML::Value << camera.GetPerspectiveVerticalFOV();
 			out << YAML::Key << "PerspectiveNear" << YAML::Value << camera.GetPerspectiveNearClip();
 			out << YAML::Key << "PerspectiveFar" << YAML::Value << camera.GetPerspectiveFarClip();
@@ -228,7 +228,7 @@ namespace Hazel {
 
 					auto& cameraProps = cameraComponent["Camera"];
 
-					component.Camera.SetProjectionType((SceneCamera::ProjectionType)cameraProps["ProjectionType"].as<int>());
+					component.Camera.SetProjectionType(static_cast<SceneCamera::ProjectionType>(cameraProps["ProjectionType"].as<int>()));
 					component.Camera.SetPerspectiveVerticalFOV(cameraProps["PerspectiveFOV"].as<float>());
 					component.Camera.SetPerspectiveNearClip(cameraProps["PerspectiveNear"].as<float>());
 					component.Camera.SetPerspectiveFarClip(cameraProps["PerspectiveFar"].as<float>());
