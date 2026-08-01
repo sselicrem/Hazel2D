@@ -14,6 +14,11 @@ project "Hazelnut"
 		"src/**.cpp"
 	}
 
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS"
+	}
+
 	includedirs
 	{
 		"%{wks.location}/Hazel/vendor/spdlog/include",
