@@ -300,22 +300,22 @@ namespace Hazel {
 	void EditorLayer::OpenScene()
 	{
 		auto filePath = FileDialogs::OpenFile("Hazel Scene (*.hazel)\0*.hazel\0");
-		if (!filePath.empty()) {
+		if (filePath) {
 			m_ActiveScene = CreateRef<Scene>();
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
+			
 			SceneSerializer serializer(m_ActiveScene);
-			serializer.Deserialize(filePath);
+			serializer.Deserialize(filePath.value());
 		}
 	}
 
 	void EditorLayer::SaveAs()
 	{
 		auto filePath = FileDialogs::SaveFile("Hazel Scene (*.hazel)\0*.hazel\0");
-		if (!filePath.empty()) {
+		if (filePath) {
 			SceneSerializer serializer(m_ActiveScene);
-			serializer.Serialize(filePath);
+			serializer.Serialize(filePath.value());
 		}
 	}
 }
