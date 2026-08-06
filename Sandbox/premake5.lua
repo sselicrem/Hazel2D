@@ -20,7 +20,8 @@ project "Sandbox"
 		"%{wks.location}/Hazel/src",
 		"%{wks.location}/Hazel/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links
