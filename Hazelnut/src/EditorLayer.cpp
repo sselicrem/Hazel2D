@@ -29,66 +29,7 @@ namespace Hazel {
 
 		m_ActiveScene = CreateRef<Scene>();
 
-#if 0
-		auto square = m_ActiveScene->CreateEntity("Square");
-		square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.f, 1.f, 0.f, 1.f });
-		m_SquareEntity = square;
-
-		auto square2 = m_ActiveScene->CreateEntity("Square2");
-		square2.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.f, 1.f, 0.f, 1.f });
-
-		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
-		m_CameraEntity.AddComponent<CameraComponent>();
-
-		m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
-		auto& cameraComponent = m_SecondCamera.AddComponent<CameraComponent>();
-		cameraComponent.Primary = false;
-
-		class CameraController: public ScriptableEntity {
-		public:
-			void OnCreate()
-			{
-				std::cout << "CameraController::OnCreate" << std::endl;
-			}
-
-			void OnDestroy()
-			{
-
-			}
-
-			void OnUpdate(Timestep ts)
-			{
-				auto& transformComponent = GetComponent<TransformComponent>();
-				float speed = 5.f;
-
-				auto& camera = GetComponent<CameraComponent>().Primary;
-
-				if (camera)
-				{
-					if (Input::IsKeyPressed(Key::A))
-					{
-						transformComponent.Translation.x -= speed * ts;
-					}
-					if (Input::IsKeyPressed(Key::D))
-					{
-						transformComponent.Translation.x += speed * ts;
-					}
-					if (Input::IsKeyPressed(Key::W))
-					{
-						transformComponent.Translation.y += speed * ts;
-					}
-					if (Input::IsKeyPressed(Key::S))
-					{
-						transformComponent.Translation.y -= speed * ts;
-					}
-				}
-			}
-		};
-
-
-		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-#endif
+		m_EditorCamera = EditorCamera(30.f, 1.6f, 0.1f, 1000.f);
 		//Panels
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
@@ -109,14 +50,16 @@ namespace Hazel {
 		{
 			m_Framebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-
+			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		}
 
 		// Update
 		if (m_ViewportFocused)
+		{
 			m_CameraController.OnUpdate(ts);
-
+			m_EditorCamera.OnUpdate(ts);
+		}
 
 		// Render
 		Renderer2D::ResetStats();
@@ -125,7 +68,7 @@ namespace Hazel {
 		RenderCommand::Clear();
 
 		//Update Scene
-		m_ActiveScene->OnUpdate(ts);
+		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 
 		m_Framebuffer->Unbind();
 	}
@@ -248,11 +191,15 @@ namespace Hazel {
 			float windowHeight = (float)ImGui::GetWindowHeight();
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
-			// Camera
-			auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-			const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
-			const glm::mat4& cameraProjection = camera.GetProjection();
-			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+			// Runtime Camera form an Entity
+			//auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+			//const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+			//const glm::mat4& cameraProjection = camera.GetProjection();
+			//glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+			//Editor Camera
+			const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 			// Entity transform
 			auto& tc = selectedEntity.GetComponent<TransformComponent>();
@@ -292,7 +239,7 @@ namespace Hazel {
 	void EditorLayer::OnEvent(Event& e)
 	{
 		m_CameraController.OnEvent(e);
-
+		m_EditorCamera.OnEvent(e);
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<KeyPressedEvent>(HZ_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
 	}
