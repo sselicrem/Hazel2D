@@ -21,6 +21,7 @@ namespace Hazel
 		bool OnKeyPressed(KeyPressedEvent& event);
 		void NewScene();
 		void OpenScene();
+		void Save();
 		void SaveAs();
 	private:
 		OrthographicCameraController m_CameraController;
@@ -46,6 +47,7 @@ namespace Hazel
 
 		int m_GizmoType = -1;
 
+		std::string openedFile;
 		//Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};

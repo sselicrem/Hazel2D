@@ -58,8 +58,8 @@ namespace Hazel {
 		if (m_ViewportFocused)
 		{
 			m_CameraController.OnUpdate(ts);
-			m_EditorCamera.OnUpdate(ts);
 		}
+		m_EditorCamera.OnUpdate(ts);
 
 		// Render
 		Renderer2D::ResetStats();
@@ -142,6 +142,11 @@ namespace Hazel {
 				if (ImGui::MenuItem("Open...", "Ctrl+O"))
 				{
 					OpenScene();
+				}
+
+				if (ImGui::MenuItem("Save", "Ctrl+S"))
+				{
+					Save();
 				}
 
 				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
@@ -273,9 +278,12 @@ namespace Hazel {
 		}
 		case Key::S:
 		{
-			if (controlPressed && shiftPressed)
+			if (controlPressed)
 			{
-				SaveAs();
+				if (shiftPressed)
+					SaveAs();
+				else
+					Save();
 			}
 			break;
 		}
@@ -307,6 +315,8 @@ namespace Hazel {
 
 	void EditorLayer::NewScene()
 	{
+		openedFile.clear();
+
 		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
@@ -322,6 +332,20 @@ namespace Hazel {
 			
 			SceneSerializer serializer(m_ActiveScene);
 			serializer.Deserialize(filePath.value());
+
+			openedFile = filePath.value();
+		}
+	}
+
+	void EditorLayer::Save()
+	{
+		if (!openedFile.empty()) {
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Serialize(openedFile);
+		}
+		else
+		{
+			SaveAs();
 		}
 	}
 
@@ -331,6 +355,8 @@ namespace Hazel {
 		if (filePath) {
 			SceneSerializer serializer(m_ActiveScene);
 			serializer.Serialize(filePath.value());
+
+			openedFile = filePath.value();
 		}
 	}
 }
