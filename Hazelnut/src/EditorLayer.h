@@ -18,6 +18,7 @@ namespace Hazel
 		void OnImGuiRender() override;
 		void OnEvent(Event& event) override;
 	private:
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
 		bool OnKeyPressed(KeyPressedEvent& event);
 		void NewScene();
 		void OpenScene();
