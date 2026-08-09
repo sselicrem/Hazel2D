@@ -88,8 +88,7 @@ namespace Hazel {
 			auto& cameraComponent = view.get<CameraComponent>(entity);
 			if (!cameraComponent.FixedAspectRatio)
 			{
-				if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
-					cameraComponent.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+				cameraComponent.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
 			}
 		}
 	}
@@ -149,6 +148,7 @@ namespace Hazel {
 	template<>
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
 	{
-		component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
+			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
 	}
 }
