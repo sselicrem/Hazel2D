@@ -2,7 +2,7 @@ project "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 	buildoptions "/utf-8"
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")

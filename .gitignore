@@ -1,8 +1,13 @@
 # Directories
 
+Hazel/vendor/VulkanSDK
+Hazelnut/assets/cache
+scripts/__pycache__
+
 .vs/
 bin/
 bin-int/
+
 # Files
 HazelProfile-Runtime.json
 HazelProfile-Shutdown.json

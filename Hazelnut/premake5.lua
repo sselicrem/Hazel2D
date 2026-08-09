@@ -2,7 +2,7 @@ project "Hazelnut"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 	buildoptions "/utf-8"
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
@@ -16,7 +16,8 @@ project "Hazelnut"
 
 	defines
 	{
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+		"USE_IMGUI_API"
 	}
 
 	includedirs

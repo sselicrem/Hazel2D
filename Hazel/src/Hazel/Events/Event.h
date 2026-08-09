@@ -50,7 +50,7 @@ namespace Hazel {
 		{
 			return GetCategoryFlags() & category;
 		}
-		bool handled = false;
+		bool Handled = false;
 
 	};
 
@@ -68,7 +68,7 @@ namespace Hazel {
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.handled = func(static_cast<T&>(m_Event));
+				m_Event.Handled = func(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;
