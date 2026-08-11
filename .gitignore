@@ -16,7 +16,6 @@ HazelProfile-Startup.json
 *.sln
 *.vcxproj
 *.vcxproj.filters
-imgui.ini
 .log
 
 ## Ignore Visual Studio temporary files, build results, and

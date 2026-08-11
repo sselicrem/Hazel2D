@@ -1,11 +1,13 @@
 #pragma once
 
 #include <Hazel.h>
-#include "Panels/SceneHierarchyPanel.h"
 #include "Hazel/Renderer/EditorCamera.h"
+#include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 namespace Hazel
 {
+
 	class EditorLayer : public Layer
 	{
 	public:
@@ -51,8 +53,10 @@ namespace Hazel
 		int m_GizmoType = -1;
 
 		std::string openedFile;
+
 		//Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
+		ContentBrowserPanel m_ContentBrowserPanel;
 	};
 
 }
