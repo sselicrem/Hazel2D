@@ -5,10 +5,10 @@
 
 namespace Hazel {
 
-	const std::filesystem::path s_AssetPath = "assets";
+	extern const std::filesystem::path g_AssetPath = "assets";
 
 	ContentBrowserPanel::ContentBrowserPanel()
-		: m_CurrentDirectiry(s_AssetPath)
+		: m_CurrentDirectiry(g_AssetPath)
 	{
 		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
 		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
@@ -18,7 +18,7 @@ namespace Hazel {
 	{
 		ImGui::Begin("Content Browser");	
 
-		if (m_CurrentDirectiry != s_AssetPath)
+		if (m_CurrentDirectiry != g_AssetPath)
 		{
 			if (ImGui::Button("<-"))
 			{
@@ -26,8 +26,8 @@ namespace Hazel {
 			}
 		}
 
-		static float padding = 8.f;
-		static float thumbnailSize = 64.f;
+		static float padding = 16.f;
+		static float thumbnailSize = 128;
 		float cellSize = thumbnailSize + padding;
 
 		float panelWidth = ImGui::GetContentRegionAvail().x;
@@ -40,11 +40,22 @@ namespace Hazel {
 		for (auto& directory: std::filesystem::directory_iterator(m_CurrentDirectiry))
 		{
 			const auto& path = directory.path();
-			auto relativePath = std::filesystem::relative(path, s_AssetPath);
+			auto relativePath = std::filesystem::relative(path, g_AssetPath);
 			std::string filenameString = relativePath.filename().string();
 
+			ImGui::PushID(filenameString.c_str());
 			Ref<Texture2D> icon = directory.is_directory() ? m_DirectoryIcon : m_FileIcon;
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::PopStyleColor();
+
+			if (ImGui::BeginDragDropSource())
+			{
+				const wchar_t* itemPath = relativePath.c_str();
+				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
+				ImGui::EndDragDropSource();
+			}
+
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				if (directory.is_directory())
@@ -55,6 +66,8 @@ namespace Hazel {
 			ImGui::TextWrapped(filenameString.c_str());
 
 			ImGui::NextColumn();
+
+			ImGui::PopID();
 		}
 
 		ImGui::Columns(1);
