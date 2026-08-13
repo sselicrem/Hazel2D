@@ -22,6 +22,13 @@ namespace Hazel
 	private:
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
 		bool OnKeyPressed(KeyPressedEvent& event);
+
+		void OnScenePlay();
+		void OnSceneStop();
+
+		// UI Panels
+		void UI_ToolBar();
+
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
@@ -30,12 +37,11 @@ namespace Hazel
 	private:
 		OrthographicCameraController m_CameraController;
 
-		//Temp
-		Ref<VertexArray> m_SquareVA;
-		Ref<Shader> m_FlatColorShader;
-		Ref<Texture2D> m_CheckerboardTexture;
+		// Temp
 		Ref<Framebuffer> m_Framebuffer;
+
 		Ref<Scene> m_ActiveScene;
+
 		Entity m_SquareEntity;
 		Entity m_CameraEntity;
 		Entity m_SecondCamera;
@@ -55,9 +61,21 @@ namespace Hazel
 
 		std::string openedFile;
 
-		//Panels
+		enum class SceneState
+		{
+			Edit = 0,
+			Play = 1
+		};
+
+		SceneState m_SceneState = SceneState::Edit;
+
+		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
+
+		// Editor resources
+		Ref<Texture2D> m_IconPlay;
+		Ref<Texture2D> m_IconStop;
 	};
 
 }
