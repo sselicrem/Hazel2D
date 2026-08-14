@@ -4,11 +4,11 @@
 	branch = v1.x
 [submodule "Hazel/vendor/GLFW"]
 	path = Hazel/vendor/GLFW
-	url = ../../TheCherno/glfw.git
+	url = https://github.com/sselicrem/glfw.git
 	branch = master
 [submodule "Hazel/vendor/imgui"]
 	path = Hazel/vendor/imgui
-	url = ../../TheCherno/imgui.git
+	url = ../../sselicrem/imgui.git
 	branch = docking
 [submodule "Hazel/vendor/glm"]
 	path = Hazel/vendor/glm
@@ -16,7 +16,7 @@
 	branch = master
 [submodule "Hazel/vendor/yaml-cpp"]
 	path = Hazel/vendor/yaml-cpp
-	url = https://github.com/TheCherno/yaml-cpp.git
+	url = https://github.com/sselicrem/yaml-cpp.git
 [submodule "Hazel/vendor/ImGuizmo"]
 	path = Hazel/vendor/ImGuizmo
-	url = https://github.com/TheCherno/ImGuizmo.git
+	url = https://github.com/sselicrem/ImGuizmo.git
