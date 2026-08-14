@@ -11,6 +11,29 @@
 namespace YAML {
 
 	template<>
+	struct convert<glm::vec2>
+	{
+		static Node encode(const glm::vec2& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.SetStyle(EmitterStyle::Flow);
+			return node;
+		}
+
+		static bool decode(const Node& node, glm::vec2& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 2)
+				return false;
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			return true;
+		}
+	};
+
+	template<>
 	struct convert<glm::vec3>
 	{
 		static Node encode(const glm::vec3& rhs)
@@ -66,13 +89,39 @@ namespace YAML {
 
 namespace Hazel {
 
+	static std::string RigidBody2d_BodyType_ToString(Rigidbody2DComponent::BodyType type) {
+		switch (type)
+		{
+		case Hazel::Rigidbody2DComponent::BodyType::Static: return "Static";
+		case Hazel::Rigidbody2DComponent::BodyType::Dynamic: return "Dynamic";
+		case Hazel::Rigidbody2DComponent::BodyType::Kinematic: return "Kinematic";
+		}
+		HZ_ASSERT(false, "Unknown Body Type!");
+		return std::string();
+	}
+
+	static Rigidbody2DComponent::BodyType RigidBody2d_BodyType_FromString(const std::string& type) {
+		if (type == "Static") return Rigidbody2DComponent::BodyType::Static;
+		if (type == "Dynamic") return Rigidbody2DComponent::BodyType::Dynamic;
+		if (type == "Kinematic") return Rigidbody2DComponent::BodyType::Kinematic;
+
+		HZ_ASSERT(false, "Unknown Body Type!");
+		return Rigidbody2DComponent::BodyType::Static;
+	}
+
+	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
+		return out;
+	}
 
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
 	{
 		out << YAML::Flow;
 		out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
 		return out;
-	}	
+	}
 
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec4& v)
 	{
@@ -150,6 +199,36 @@ namespace Hazel {
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 
 			out << YAML::EndMap; // SpriteRendererComponent
+		}
+
+		if (entity.HasComponent<Rigidbody2DComponent>())
+		{
+			out << YAML::Key << "Rigidbody2DComponent";
+			out << YAML::BeginMap; // Rigidbody2DComponent
+
+			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+			out << YAML::Key << "BodyType" << YAML::Value << RigidBody2d_BodyType_ToString(rb2d.Type);
+			out << YAML::Key << "FixedRotation" << YAML::Value << rb2d.FixedRotation;
+
+			out << YAML::EndMap; // Rigidbody2DComponent
+		}
+
+		if (entity.HasComponent<BoxCollider2DComponent>())
+		{
+			out << YAML::Key << "BoxCollider2DComponent";
+			out << YAML::BeginMap; // BoxCollider2DComponent
+
+			auto& boxComponent = entity.GetComponent<BoxCollider2DComponent>();
+			out << YAML::Key << "Offset" << YAML::Value << boxComponent.Offset;
+			out << YAML::Key << "Size" << YAML::Value << boxComponent.Size;
+
+			out << YAML::Key << "Density" << YAML::Value << boxComponent.Density;
+			out << YAML::Key << "Friction" << YAML::Value << boxComponent.Friction;
+			out << YAML::Key << "Restitiution" << YAML::Value << boxComponent.Restitiution;
+			out << YAML::Key << "RestitiutionThreshold" << YAML::Value << boxComponent.RestitiutionThreshold;
+
+
+			out << YAML::EndMap; // BoxCollider2DComponent
 		}
 
 		out << YAML::EndMap; // Entity
@@ -246,6 +325,27 @@ namespace Hazel {
 
 					component.Primary = cameraComponent["Primary"].as<bool>();
 					component.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+				}
+
+				if (auto rb2dComponent = entity["Rigidbody2DComponent"]; rb2dComponent)
+				{
+					auto& component = desirealizedEntity.AddComponent<Rigidbody2DComponent>();
+
+					component.Type = RigidBody2d_BodyType_FromString(rb2dComponent["BodyType"].as<std::string>());
+					component.FixedRotation = rb2dComponent["FixedRotation"].as<bool>();
+				}
+
+				if (auto boxColliderComponent = entity["BoxCollider2DComponent"]; boxColliderComponent)
+				{
+					auto& component = desirealizedEntity.AddComponent<BoxCollider2DComponent>();
+
+					component.Offset = boxColliderComponent["Offset"].as<glm::vec2>();
+					component.Size = boxColliderComponent["Size"].as<glm::vec2>();
+
+					component.Density = boxColliderComponent["Density"].as<float>();
+					component.Friction = boxColliderComponent["Friction"].as<float>();
+					component.Restitiution = boxColliderComponent["Restitiution"].as<float>();
+					component.RestitiutionThreshold = boxColliderComponent["RestitiutionThreshold"].as<float>();
 				}
 			}
 		}

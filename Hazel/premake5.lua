@@ -42,7 +42,8 @@ project "Hazel"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.VulkanSDK}"
+		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.Box2D}"
 	}
 
 	links
@@ -51,7 +52,8 @@ project "Hazel"
 		"Glad",
 		"ImGui",
 		"opengl32.lib",
-		"yaml-cpp"
+		"yaml-cpp",
+		"Box2D"
 	}
 
 	filter "files:vendor/ImGuizmo/**.cpp"
