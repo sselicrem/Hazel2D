@@ -449,16 +449,19 @@ namespace Hazel {
 
 	void EditorLayer::OpenScene(const std::filesystem::path& filepath)
 	{
-		if (!filepath.empty())
+		if (filepath.extension().string() != ".hazel")
 		{
-			m_ActiveScene = CreateRef<Scene>();
+			HZ_WARN("Could not load {0} - not a scene file", filepath.filename().string());
+			return;
+		}
+
+		Ref<Scene> newScene = CreateRef<Scene>();
+		SceneSerializer serializer(newScene);
+		if (serializer.Deserialize(filepath.string()))
+		{
+			m_ActiveScene = newScene;
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Deserialize(filepath.string());
-
-			openedFile = filepath.string();
 		}
 	}
 
