@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Hazel/Core/Log.h"
+#include "Hazel/Core/UUID.h"
 #include "Hazel/Scene/Scene.h"
+#include "Hazel/Scene/Components.h"
 
 #include <entt.hpp>
 
@@ -15,6 +17,8 @@ namespace Hazel
 
 		Entity(entt::entity handle, Scene* scene);
 		Entity(const Entity& other) = default;
+
+		UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)

@@ -3,6 +3,7 @@
 
 #include "Hazel/Scene/Components.h"
 #include "Hazel/Scene/Entity.h"
+#include "Hazel/Scene/ScriptableEntity.h"
 
 #include "Hazel/Renderer/Renderer2D.h"
 
@@ -182,8 +183,14 @@ namespace Hazel {
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
+		return CreateEntityWithUUID(UUID(), name);
+	}
+
+	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
+	{
 		Entity entity = { m_Registry.create(), this };
 		entity.AddComponent<TransformComponent>();
+		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TagComponent>(name);
 
 		return entity;
@@ -209,7 +216,12 @@ namespace Hazel {
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
-		static_assert(false);
+		//static_assert(false);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
+	{
 	}
 
 	template<>

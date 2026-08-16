@@ -137,8 +137,10 @@ namespace Hazel {
 
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
+		HZ_CORE_ASSERT(entity.HasComponent<IDComponent>(), "Serializable Entity must have an IDComponent");
+
 		out << YAML::BeginMap; // Entity
-		out << YAML::Key << "Entity" << YAML::Value << static_cast<uint32_t>(entity);
+		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -292,7 +294,7 @@ namespace Hazel {
 
 				HZ_CORE_TRACE("Deserialized entity with ID '{0}' and name '{1}'", uuid, name);
 
-				Entity desirealizedEntity = m_Scene->CreateEntity(name);
+				Entity desirealizedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
 
 				if (auto transformComponent = entity["TransformComponent"]; transformComponent)
 				{
