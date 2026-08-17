@@ -25,6 +25,7 @@ namespace Hazel
 
 		void OnScenePlay();
 		void OnSceneStop();
+		void OnDuplicateEntity();
 
 		// UI Panels
 		void UI_ToolBar();
@@ -32,6 +33,7 @@ namespace Hazel
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
+		void SerializeScene(const std::filesystem::path& path);
 		void Save();
 		void SaveAs();
 	private:
@@ -41,6 +43,7 @@ namespace Hazel
 		Ref<Framebuffer> m_Framebuffer;
 
 		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_EditorScene;
 
 		Entity m_SquareEntity;
 		Entity m_CameraEntity;
@@ -59,7 +62,7 @@ namespace Hazel
 
 		int m_GizmoType = -1;
 
-		std::string openedFile;
+		std::filesystem::path m_openedScene;
 
 		enum class SceneState
 		{

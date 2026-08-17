@@ -18,6 +18,8 @@ namespace Hazel {
 		Scene();
 		~Scene();
 
+		static Ref<Scene> Copy(Ref<Scene> other);
+
 		void OnUpdateEditor(Timestep ts, const EditorCamera& camera);
 		void OnUpdateRuntime(Timestep ts);
 		void OnViewportResize(uint32_t width, uint32_t height);
@@ -28,6 +30,8 @@ namespace Hazel {
 		Entity CreateEntity(const std::string& name = "Entity");
 		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = "Entity");
 		void DestroyEntity(Entity entity);
+		void DuplicateEntity(Entity entity);
+
 		Entity GetPrimaryCameraEntity();
 
 	private:
