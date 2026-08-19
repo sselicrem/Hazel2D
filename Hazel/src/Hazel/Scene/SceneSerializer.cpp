@@ -203,6 +203,19 @@ namespace Hazel {
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
+		if (entity.HasComponent<CircleRendererComponent>())
+		{
+			out << YAML::Key << "CircleRendererComponent";
+			out << YAML::BeginMap; // CircleRendererComponent
+
+			auto& circleRendererComponent = entity.GetComponent<CircleRendererComponent>();
+			out << YAML::Key << "Color" << YAML::Value << circleRendererComponent.Color;
+			out << YAML::Key << "Thickness" << YAML::Value << circleRendererComponent.Thickness;
+			out << YAML::Key << "Fade" << YAML::Value << circleRendererComponent.Fade;
+
+			out << YAML::EndMap; // CircleRendererComponent
+		}
+
 		if (entity.HasComponent<Rigidbody2DComponent>())
 		{
 			out << YAML::Key << "Rigidbody2DComponent";
@@ -294,11 +307,11 @@ namespace Hazel {
 
 				HZ_CORE_TRACE("Deserialized entity with ID '{0}' and name '{1}'", uuid, name);
 
-				Entity desirealizedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
+				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
 
 				if (auto transformComponent = entity["TransformComponent"]; transformComponent)
 				{
-					auto& component = desirealizedEntity.GetComponent<TransformComponent>();
+					auto& component = deserializedEntity.GetComponent<TransformComponent>();
 					component.Translation = transformComponent["Translation"].as<glm::vec3>();
 					component.Rotation = transformComponent["Rotation"].as<glm::vec3>();
 					component.Scale = transformComponent["Scale"].as<glm::vec3>();
@@ -306,13 +319,21 @@ namespace Hazel {
 
 				if (auto spriteComponent = entity["SpriteRendererComponent"]; spriteComponent)
 				{
-					auto& component = desirealizedEntity.AddComponent<SpriteRendererComponent>();
+					auto& component = deserializedEntity.AddComponent<SpriteRendererComponent>();
 					component.Color = spriteComponent["Color"].as<glm::vec4>();
+				}
+
+				if (auto circleRendererComponent = entity["CircleRendererComponent"]; circleRendererComponent)
+				{
+					auto& crc = deserializedEntity.AddComponent<CircleRendererComponent>();
+					crc.Color = circleRendererComponent["Color"].as<glm::vec4>();
+					crc.Thickness = circleRendererComponent["Thickness"].as<float>();
+					crc.Fade = circleRendererComponent["Fade"].as<float>();
 				}
 
 				if (auto cameraComponent = entity["CameraComponent"]; cameraComponent)
 				{
-					auto& component = desirealizedEntity.AddComponent<CameraComponent>();
+					auto& component = deserializedEntity.AddComponent<CameraComponent>();
 
 					auto& cameraProps = cameraComponent["Camera"];
 
@@ -323,7 +344,7 @@ namespace Hazel {
 
 					component.Camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
 					component.Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
-					component.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());	
+					component.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
 
 					component.Primary = cameraComponent["Primary"].as<bool>();
 					component.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
@@ -331,7 +352,7 @@ namespace Hazel {
 
 				if (auto rb2dComponent = entity["Rigidbody2DComponent"]; rb2dComponent)
 				{
-					auto& component = desirealizedEntity.AddComponent<Rigidbody2DComponent>();
+					auto& component = deserializedEntity.AddComponent<Rigidbody2DComponent>();
 
 					component.Type = RigidBody2d_BodyType_FromString(rb2dComponent["BodyType"].as<std::string>());
 					component.FixedRotation = rb2dComponent["FixedRotation"].as<bool>();
@@ -339,7 +360,7 @@ namespace Hazel {
 
 				if (auto boxColliderComponent = entity["BoxCollider2DComponent"]; boxColliderComponent)
 				{
-					auto& component = desirealizedEntity.AddComponent<BoxCollider2DComponent>();
+					auto& component = deserializedEntity.AddComponent<BoxCollider2DComponent>();
 
 					component.Offset = boxColliderComponent["Offset"].as<glm::vec2>();
 					component.Size = boxColliderComponent["Size"].as<glm::vec2>();

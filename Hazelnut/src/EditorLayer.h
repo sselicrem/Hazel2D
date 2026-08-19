@@ -62,7 +62,7 @@ namespace Hazel
 
 		int m_GizmoType = -1;
 
-		std::filesystem::path m_openedScene;
+		std::filesystem::path m_ActiveScenePath;
 
 		enum class SceneState
 		{

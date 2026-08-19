@@ -20,7 +20,7 @@ Entities:
       FixedAspectRatio: false
     Rigidbody2DComponent:
       BodyType: Dynamic
-      FixedRotation: false
+      FixedRotation: true
     BoxCollider2DComponent:
       Offset: [0, 0]
       Size: [0.100000001, 0.100000001]
@@ -104,3 +104,14 @@ Entities:
       Friction: 0.5
       Restitiution: 0
       RestitiutionThreshold: 0.5
+  - Entity: 3162722939396994200
+    TagComponent:
+      Tag: Circle
+    TransformComponent:
+      Translation: [1, 1, 1]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [0.300138295, 0.683397651, 0.208449483, 1]
+      Thickness: 1
+      Fade: 0.00499999989
