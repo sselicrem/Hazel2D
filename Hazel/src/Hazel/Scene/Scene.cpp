@@ -13,6 +13,7 @@
 #include <box2d/b2_body.h>
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_polygon_shape.h>
+#include <box2d/b2_circle_shape.h>
 
 namespace Hazel {
 
@@ -83,6 +84,7 @@ namespace Hazel {
 		CopyComponent<NativeScriptComponent>(newScene->m_Registry, other->m_Registry, enttMap);
 		CopyComponent<Rigidbody2DComponent>(newScene->m_Registry, other->m_Registry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(newScene->m_Registry, other->m_Registry, enttMap);
+		CopyComponent<CircleCollider2DComponent>(newScene->m_Registry, other->m_Registry, enttMap);
 		CopyComponent<CircleRendererComponent>(newScene->m_Registry, other->m_Registry, enttMap);
 
 		return newScene;
@@ -254,6 +256,24 @@ namespace Hazel {
 
 				body->CreateFixture(&fixtureDef);
 			}
+
+			if (entity.HasComponent<CircleCollider2DComponent>())
+			{
+				auto& component = entity.GetComponent<CircleCollider2DComponent>();
+
+				b2CircleShape circleShape;
+				circleShape.m_p.Set(component.Offset.x, component.Offset.y);
+				circleShape.m_radius = component.Radius;
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &circleShape;
+				fixtureDef.density = component.Density;
+				fixtureDef.friction = component.Friction;
+				fixtureDef.restitution = component.Restitiution;
+				fixtureDef.restitutionThreshold = component.RestitiutionThreshold;
+
+				body->CreateFixture(&fixtureDef);
+			}
 		}
 	}
 
@@ -358,6 +378,11 @@ namespace Hazel {
 
 	template<>
 	void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
 	{
 	}
 }

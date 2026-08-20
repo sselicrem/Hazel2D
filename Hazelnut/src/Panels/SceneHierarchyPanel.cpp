@@ -280,6 +280,15 @@ namespace Hazel {
 				}
 			}
 
+			if (!m_SelectionContext.HasComponent<CircleCollider2DComponent>())
+			{
+				if (ImGui::MenuItem("Circle Collider"))
+				{
+					m_SelectionContext.AddComponent<CircleCollider2DComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
 			ImGui::EndPopup();
 		}
 		ImGui::PopItemWidth();
@@ -413,11 +422,24 @@ namespace Hazel {
 		});
 
 
-		DrawComponent<BoxCollider2DComponent>("Rigid body", entity, [](auto& component) {
+		DrawComponent<BoxCollider2DComponent>("Box Collider", entity, [](auto& component) {
 
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
 			ImGui::DragFloat2("Size", glm::value_ptr(component.Size));
 
+			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.f, 1.f);
+			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.f, 1.f);
+			ImGui::DragFloat("Restitiution", &component.Restitiution, 0.01f, 0.f, 1.f);
+			ImGui::DragFloat("RestitiutionThreshold", &component.RestitiutionThreshold, 0.01f, 0.f);
+
+			});
+
+
+		DrawComponent<CircleCollider2DComponent>("Circle Collider", entity, [](auto& component) {
+
+			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
+
+			ImGui::DragFloat("Radius", &component.Radius);
 			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.f, 1.f);
 			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.f, 1.f);
 			ImGui::DragFloat("Restitiution", &component.Restitiution, 0.01f, 0.f, 1.f);
