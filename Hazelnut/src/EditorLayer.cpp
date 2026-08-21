@@ -113,6 +113,8 @@ namespace Hazel {
 			m_HoveredEntity = pixelData == -1 ? Entity() : Entity(static_cast<entt::entity>(pixelData), m_ActiveScene.get());
 		}
 
+		OnOverlayRender();
+
 		m_Framebuffer->Unbind();
 	}
 
@@ -225,6 +227,10 @@ namespace Hazel {
 
 		ImGui::End();
 
+		ImGui::Begin("Settings");
+		ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders);
+		ImGui::End();
+
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::Begin("Viewport");
 
@@ -330,6 +336,51 @@ namespace Hazel {
 		Entity entity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (entity)
 			m_EditorScene->DuplicateEntity(entity);
+	}
+
+	void EditorLayer::OnOverlayRender()
+	{
+		if (m_SceneState == SceneState::Play)
+		{
+			Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
+
+			Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
+		}
+		else
+			Renderer2D::BeginScene(m_EditorCamera);
+
+		if (m_ShowPhysicsColliders)
+		{
+			{
+				auto view = m_ActiveScene->GetAllEntitiesWidth<TransformComponent, CircleCollider2DComponent>();
+				for (auto entity : view)
+				{
+					auto [tc, cc2d] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
+
+					glm::vec3 translation = tc.Translation + glm::vec3(cc2d.Offset, 0.001f);
+					glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2.f);
+
+					glm::mat4 transform = glm::translate(glm::mat4(1.f), translation) * glm::scale(glm::mat4(1.f), scale);
+					Renderer2D::DrawCircle(transform, glm::vec4(0.f, 1.f, 0.f, 1.f), 0.02f);
+				}
+			}
+
+			{
+				auto view = m_ActiveScene->GetAllEntitiesWidth<TransformComponent, BoxCollider2DComponent>();
+				for (auto entity : view)
+				{
+					auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+
+					glm::vec3 translation = tc.Translation + glm::vec3(bc2d.Offset, 0.001f);
+					glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.f, 1.f);
+					float rotation = tc.Rotation.z;
+					glm::mat4 transform = glm::translate(glm::mat4(1.f), translation) * glm::rotate(glm::mat4(1.f), tc.Rotation.z, glm::vec3(0.f, 0.f, 1.f)) * glm::scale(glm::mat4(1.f), scale);
+					Renderer2D::DrawRect(transform, glm::vec4(0.f, 1.f, 0.f, 1.f));
+				}
+			}
+		}
+
+		Renderer2D::EndScene();
 	}
 
 	void EditorLayer::UI_ToolBar()

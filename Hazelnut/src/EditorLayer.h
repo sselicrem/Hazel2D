@@ -26,6 +26,7 @@ namespace Hazel
 		void OnScenePlay();
 		void OnSceneStop();
 		void OnDuplicateEntity();
+		void OnOverlayRender();
 
 		// UI Panels
 		void UI_ToolBar();
@@ -53,6 +54,7 @@ namespace Hazel
 		EditorCamera m_EditorCamera;
 
 		bool m_PrimaryCamera = true;
+		bool m_ShowPhysicsColliders = false;
 
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 		glm::vec2 m_ViewportBounds[2];

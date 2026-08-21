@@ -34,6 +34,12 @@ namespace Hazel {
 
 		Entity GetPrimaryCameraEntity();
 
+		template <typename... Components>
+		auto GetAllEntitiesWidth()
+		{
+			return m_Registry.view<Components...>();
+		}
+
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);

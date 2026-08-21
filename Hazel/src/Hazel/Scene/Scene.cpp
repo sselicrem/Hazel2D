@@ -263,7 +263,7 @@ namespace Hazel {
 
 				b2CircleShape circleShape;
 				circleShape.m_p.Set(component.Offset.x, component.Offset.y);
-				circleShape.m_radius = component.Radius;
+				circleShape.m_radius = transform.Scale.x * component.Radius;
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &circleShape;
@@ -314,6 +314,7 @@ namespace Hazel {
 		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
 		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()
