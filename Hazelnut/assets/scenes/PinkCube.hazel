@@ -5,19 +5,33 @@ Entities:
       Tag: Left
     TransformComponent:
       Translation: [-0.354999989, 0, 0.349999994]
-      Rotation: [0, -0.785398185, 0]
+      Rotation: [0, -0.785398245, 0]
       Scale: [1, 1, 1]
+    ScriptComponent:
+      ClassName: Sandbox.Player
     SpriteRendererComponent:
       Color: [1, 0, 0.949807167, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
   - Entity: 7967045383689346286
     TagComponent:
       Tag: Right
     TransformComponent:
       Translation: [0.351999998, 0, 0.349999994]
-      Rotation: [0, 0.785398185, 0]
+      Rotation: [0, 0.785398245, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0.54842025, 0, 0.586872578, 1]
+      TilingFactor: 1
   - Entity: 3630201126592782068
     TagComponent:
       Tag: Camera
@@ -45,3 +59,4 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0.876447856, 0, 0.834712803, 1]
+      TilingFactor: 1
