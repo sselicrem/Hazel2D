@@ -87,6 +87,14 @@ namespace Hazel
 		
 	};
 
+	struct ScriptComponent
+	{
+		std::string ClassName;
+
+		ScriptComponent() = default;
+		ScriptComponent(const ScriptComponent&) = default;
+	};
+
 	class ScriptableEntity;
 	struct NativeScriptComponent
 	{
@@ -125,8 +133,8 @@ namespace Hazel
 
 		float Density = 1.f;
 		float Friction = 0.5f;
-		float Restitiution = 0.0f;
-		float RestitiutionThreshold = 0.5f;
+		float Restitution = 0.0f;
+		float RestitutionThreshold = 0.5f;
 
 		// Storage for runtime
 		void* RuntimeFixtire = nullptr;
@@ -142,8 +150,8 @@ namespace Hazel
 		float Radius = 0.5f;
 		float Density = 1.f;
 		float Friction = 0.5f;
-		float Restitiution = 0.0f;
-		float RestitiutionThreshold = 0.5f;
+		float Restitution = 0.0f;
+		float RestitutionThreshold = 0.5f;
 
 		// Storage for runtime
 		void* RuntimeFixtire = nullptr;
@@ -159,6 +167,6 @@ namespace Hazel
 
 	using AllComponents =
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
-		CircleRendererComponent, CameraComponent, NativeScriptComponent,
+		CircleRendererComponent, CameraComponent, ScriptComponent, NativeScriptComponent,
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
 }

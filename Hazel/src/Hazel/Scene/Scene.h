@@ -37,6 +37,7 @@ namespace Hazel {
 		void DestroyEntity(Entity entity);
 		void DuplicateEntity(Entity entity);
 
+		Entity GetEntityByUUID(UUID uuid);
 		Entity GetPrimaryCameraEntity();
 
 		template <typename... Components>
@@ -59,6 +60,8 @@ namespace Hazel {
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
 		b2World* m_PhysicsWorld = nullptr;
+
+		std::unordered_map<UUID, entt::entity> m_EntityMap;
 
 		friend class Entity;
 		friend class SceneHierarchyPanel;

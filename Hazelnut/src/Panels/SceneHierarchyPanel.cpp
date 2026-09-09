@@ -239,6 +239,7 @@ namespace Hazel {
 		if (ImGui::BeginPopup("AddComponent"))
 		{
 			DisplayAddComponentEntry<CameraComponent>("Camera");
+			DisplayAddComponentEntry<ScriptComponent>("Script");
 			DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
 			DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
 			DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
@@ -385,8 +386,8 @@ namespace Hazel {
 
 			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.f, 1.f);
 			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.f, 1.f);
-			ImGui::DragFloat("Restitiution", &component.Restitiution, 0.01f, 0.f, 1.f);
-			ImGui::DragFloat("RestitiutionThreshold", &component.RestitiutionThreshold, 0.01f, 0.f);
+			ImGui::DragFloat("Restitiution", &component.Restitution, 0.01f, 0.f, 1.f);
+			ImGui::DragFloat("RestitiutionThreshold", &component.RestitutionThreshold, 0.01f, 0.f);
 
 			});
 
@@ -398,8 +399,8 @@ namespace Hazel {
 			ImGui::DragFloat("Radius", &component.Radius);
 			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.f, 1.f);
 			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.f, 1.f);
-			ImGui::DragFloat("Restitiution", &component.Restitiution, 0.01f, 0.f, 1.f);
-			ImGui::DragFloat("RestitiutionThreshold", &component.RestitiutionThreshold, 0.01f, 0.f);
+			ImGui::DragFloat("Restitiution", &component.Restitution, 0.01f, 0.f, 1.f);
+			ImGui::DragFloat("RestitiutionThreshold", &component.RestitutionThreshold, 0.01f, 0.f);
 
 			});
 	}

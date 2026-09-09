@@ -5,6 +5,7 @@
 #include "Hazel/Scene/Entity.h"
 #include "Hazel/Scene/ScriptableEntity.h"
 
+#include "Hazel/Scripting/ScriptEngine.h"
 #include "Hazel/Renderer/Renderer2D.h"
 
 #include <glm/glm.hpp>
@@ -109,6 +110,14 @@ namespace Hazel {
 	{
 		// Scripts Update
 		{
+			// C# Entity OnUpdate
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				ScriptEngine::OnUpdateEntity(entity, ts);
+			}
+
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, NativeScriptComponent& nsc)
 				{
 					if (!nsc.Instance)
@@ -236,11 +245,26 @@ namespace Hazel {
 	void Scene::OnRuntimeStart()
 	{
 		OnPhysics2DStart();
+
+		// Scripting
+		{
+			ScriptEngine::OnRuntimeStart(this);
+			// Instantiate all script entities
+
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				ScriptEngine::OnCreateEntity(entity);
+			}
+		}
 	}
 
 	void Scene::OnRuntimeStop()
 	{
 		OnPhysics2DStop();
+
+		ScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnSimulationStart()
@@ -265,18 +289,28 @@ namespace Hazel {
 		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TagComponent>(name);
 
+		m_EntityMap[uuid] = entity;
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
+		m_EntityMap.erase(entity.GetUUID());
 	}
 
 	void Scene::DuplicateEntity(Entity entity)
 	{
 		Entity newEntity = CreateEntity(entity.GetName());
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
+	}
+
+	Entity Scene::GetEntityByUUID(UUID uuid)
+	{
+		if (m_EntityMap.find(uuid) != m_EntityMap.end())
+			return { m_EntityMap.at(uuid), this };
+
+		return {};
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()
@@ -322,8 +356,8 @@ namespace Hazel {
 				fixtureDef.shape = &boxShape;
 				fixtureDef.density = bc2d.Density;
 				fixtureDef.friction = bc2d.Friction;
-				fixtureDef.restitution = bc2d.Restitiution;
-				fixtureDef.restitutionThreshold = bc2d.RestitiutionThreshold;
+				fixtureDef.restitution = bc2d.Restitution;
+				fixtureDef.restitutionThreshold = bc2d.RestitutionThreshold;
 
 				body->CreateFixture(&fixtureDef);
 			}
@@ -340,8 +374,8 @@ namespace Hazel {
 				fixtureDef.shape = &circleShape;
 				fixtureDef.density = component.Density;
 				fixtureDef.friction = component.Friction;
-				fixtureDef.restitution = component.Restitiution;
-				fixtureDef.restitutionThreshold = component.RestitiutionThreshold;
+				fixtureDef.restitution = component.Restitution;
+				fixtureDef.restitutionThreshold = component.RestitutionThreshold;
 
 				body->CreateFixture(&fixtureDef);
 			}
@@ -424,6 +458,11 @@ namespace Hazel {
 	{
 		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
 			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
+	{
 	}
 
 	template<>

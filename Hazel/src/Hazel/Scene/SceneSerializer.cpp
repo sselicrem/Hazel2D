@@ -192,6 +192,16 @@ namespace Hazel {
 			out<<YAML::EndMap; // CameraComponent
 		}
 
+		if (entity.HasComponent<ScriptComponent>())
+		{
+			auto& scriptComponent = entity.GetComponent<ScriptComponent>();
+
+			out << YAML::Key << "ScriptComponent";
+			out << YAML::BeginMap; // ScriptComponent
+			out << YAML::Key << "ClassName" << YAML::Value << scriptComponent.ClassName;
+			out << YAML::EndMap; // ScriptComponent
+		}
+
 		if (entity.HasComponent<SpriteRendererComponent>())
 		{
 			out << YAML::Key << "SpriteRendererComponent";
@@ -242,8 +252,8 @@ namespace Hazel {
 
 			out << YAML::Key << "Density" << YAML::Value << boxComponent.Density;
 			out << YAML::Key << "Friction" << YAML::Value << boxComponent.Friction;
-			out << YAML::Key << "Restitiution" << YAML::Value << boxComponent.Restitiution;
-			out << YAML::Key << "RestitiutionThreshold" << YAML::Value << boxComponent.RestitiutionThreshold;
+			out << YAML::Key << "Restitution" << YAML::Value << boxComponent.Restitution;
+			out << YAML::Key << "RestitutionThreshold" << YAML::Value << boxComponent.RestitutionThreshold;
 
 
 			out << YAML::EndMap; // BoxCollider2DComponent
@@ -260,8 +270,8 @@ namespace Hazel {
 
 			out << YAML::Key << "Density" << YAML::Value << boxComponent.Density;
 			out << YAML::Key << "Friction" << YAML::Value << boxComponent.Friction;
-			out << YAML::Key << "Restitiution" << YAML::Value << boxComponent.Restitiution;
-			out << YAML::Key << "RestitiutionThreshold" << YAML::Value << boxComponent.RestitiutionThreshold;
+			out << YAML::Key << "Restitution" << YAML::Value << boxComponent.Restitution;
+			out << YAML::Key << "RestitutionThreshold" << YAML::Value << boxComponent.RestitutionThreshold;
 
 
 			out << YAML::EndMap; // CircleCollider2DComponent
@@ -276,7 +286,7 @@ namespace Hazel {
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-		
+
 		m_Scene->m_Registry.view<entt::entity>().each([&](auto entityID)
 			{
 				Entity entity{ entityID, m_Scene.get() };
@@ -323,7 +333,7 @@ namespace Hazel {
 				uint64_t uuid = entity["Entity"].as<uint64_t>();
 
 				std::string name;
-				
+
 				if (auto tagComponent = entity["TagComponent"]; tagComponent)
 					name = tagComponent["Tag"].as<std::string>();
 
@@ -377,6 +387,12 @@ namespace Hazel {
 					component.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
 				}
 
+				if (auto scriptComponent = entity["ScriptComponent"]; scriptComponent)
+				{
+					auto& sc = deserializedEntity.AddComponent<ScriptComponent>();
+					sc.ClassName = scriptComponent["ClassName"].as<std::string>();
+				}
+
 				if (auto rb2dComponent = entity["Rigidbody2DComponent"]; rb2dComponent)
 				{
 					auto& component = deserializedEntity.AddComponent<Rigidbody2DComponent>();
@@ -394,8 +410,8 @@ namespace Hazel {
 
 					component.Density = boxColliderComponent["Density"].as<float>();
 					component.Friction = boxColliderComponent["Friction"].as<float>();
-					component.Restitiution = boxColliderComponent["Restitiution"].as<float>();
-					component.RestitiutionThreshold = boxColliderComponent["RestitiutionThreshold"].as<float>();
+					component.Restitution = boxColliderComponent["Restitution"].as<float>();
+					component.RestitutionThreshold = boxColliderComponent["RestitutionThreshold"].as<float>();
 				}
 
 				if (auto circleColliderComponent = entity["CircleCollider2DComponent"]; circleColliderComponent)
@@ -407,8 +423,8 @@ namespace Hazel {
 
 					component.Density = circleColliderComponent["Density"].as<float>();
 					component.Friction = circleColliderComponent["Friction"].as<float>();
-					component.Restitiution = circleColliderComponent["Restitiution"].as<float>();
-					component.RestitiutionThreshold = circleColliderComponent["RestitiutionThreshold"].as<float>();
+					component.Restitution = circleColliderComponent["Restitution"].as<float>();
+					component.RestitutionThreshold = circleColliderComponent["RestitutionThreshold"].as<float>();
 				}
 			}
 		}
