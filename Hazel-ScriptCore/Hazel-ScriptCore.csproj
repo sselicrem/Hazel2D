@@ -56,11 +56,11 @@
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Dist|x64' ">
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\Hazel\Components.cs" />
-    <Compile Include="Source\Hazel\Entity.cs" />
     <Compile Include="Source\Hazel\Input.cs" />
     <Compile Include="Source\Hazel\InternalCalls.cs" />
     <Compile Include="Source\Hazel\KeyCode.cs" />
+    <Compile Include="Source\Hazel\Scene\Components.cs" />
+    <Compile Include="Source\Hazel\Scene\Entity.cs" />
     <Compile Include="Source\Hazel\Vector2.cs" />
     <Compile Include="Source\Hazel\Vector3.cs" />
   </ItemGroup>

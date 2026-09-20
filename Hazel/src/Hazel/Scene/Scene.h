@@ -40,6 +40,8 @@ namespace Hazel {
 		Entity GetEntityByUUID(UUID uuid);
 		Entity GetPrimaryCameraEntity();
 
+		bool IsRunning() const { return m_IsRunning; }
+
 		template <typename... Components>
 		auto GetAllEntitiesWidth()
 		{
@@ -62,6 +64,8 @@ namespace Hazel {
 		b2World* m_PhysicsWorld = nullptr;
 
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
+
+		bool m_IsRunning = false;
 
 		friend class Entity;
 		friend class SceneHierarchyPanel;
