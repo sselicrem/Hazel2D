@@ -3,6 +3,7 @@
 #include "Hazel/Scene/SceneSerializer.h"
 #include "Hazel/Utils/PlatformUtils.h"
 #include "Hazel/Math/Math.h"
+#include "Hazel/Scripting/ScriptEngine.h"
 
 #include <ImGuizmo/ImGuizmo.h>
 #include <imgui/imgui.h>
@@ -208,7 +209,17 @@ namespace Hazel {
 					SaveAs();
 				}
 
-				if (ImGui::MenuItem("Exit")) Application::Get().Close();
+				if (ImGui::MenuItem("Exit"))
+					Application::Get().Close();
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Script"))
+			{
+				if (ImGui::MenuItem("Reload assembly", "Ctrl+R"))
+					ScriptEngine::ReloadAssembly();
+
 				ImGui::EndMenu();
 			}
 
@@ -562,8 +573,15 @@ namespace Hazel {
 		}
 		case Key::R:
 		{
-			if (!ImGuizmo::IsUsing())
-				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			if (controlPressed)
+			{
+				ScriptEngine::ReloadAssembly();
+			}
+			else
+			{
+				if (!ImGuizmo::IsUsing())
+					m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			}
 			break;
 		}
 		default:
