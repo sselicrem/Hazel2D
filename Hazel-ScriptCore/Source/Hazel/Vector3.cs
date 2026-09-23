@@ -31,7 +31,14 @@
 			}
 		}
 
-		public static Vector3 operator +(Vector3 a, Vector3 b)
+        public Vector3(Vector2 xy, float z)
+        {
+            X = xy.X;
+            Y = xy.Y;
+            Z = z;
+        }
+
+        public static Vector3 operator +(Vector3 a, Vector3 b)
 		{
 			return new Vector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 		}

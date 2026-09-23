@@ -39,8 +39,7 @@ namespace Hazel {
 		if (commandLineArgs.Count > 1)
 		{
 			auto sceneFilePath = commandLineArgs[1];
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Deserialize(sceneFilePath);
+			OpenScene(sceneFilePath);
 		}
 
 		m_EditorCamera = EditorCamera(30.f, 1.6f, 0.1f, 1000.f);
@@ -56,7 +55,9 @@ namespace Hazel {
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
 		HZ_PROFILE_FUNCTION();
-			
+
+		m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+
 		// Resize
 		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
@@ -65,7 +66,6 @@ namespace Hazel {
 			m_Framebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-			m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		}
 
 		// Render
@@ -251,7 +251,7 @@ namespace Hazel {
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
-		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
@@ -577,7 +577,6 @@ namespace Hazel {
 		m_ActiveScenePath.clear();
 
 		m_ActiveScene = CreateRef<Scene>();
-		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
@@ -604,7 +603,6 @@ namespace Hazel {
 		if (serializer.Deserialize(filepath.string()))
 		{
 			m_EditorScene = newScene;
-			m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneHierarchyPanel.SetContext(m_EditorScene);
 
 			m_ActiveScene = newScene;
