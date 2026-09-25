@@ -108,51 +108,52 @@ namespace Hazel {
 
 	void Scene::OnUpdateRuntime(Timestep ts)
 	{
-		// Scripts Update
+		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
-			// C# Entity OnUpdate
-			auto view = m_Registry.view<ScriptComponent>();
-			for (auto e : view)
+			// Scripts Update
 			{
-				Entity entity = { e, this };
-				ScriptEngine::OnUpdateEntity(entity, ts);
-			}
-
-			m_Registry.view<NativeScriptComponent>().each([=](auto entity, NativeScriptComponent& nsc)
+				// C# Entity OnUpdate
+				auto view = m_Registry.view<ScriptComponent>();
+				for (auto e : view)
 				{
-					if (!nsc.Instance)
+					Entity entity = { e, this };
+					ScriptEngine::OnUpdateEntity(entity, ts);
+				}
+
+				m_Registry.view<NativeScriptComponent>().each([=](auto entity, NativeScriptComponent& nsc)
 					{
-						nsc.Instance = nsc.InstantiateFn();
-						nsc.Instance->m_Entity = Entity{ entity, this };
-						nsc.Instance->OnCreate();
-					}
+						if (!nsc.Instance)
+						{
+							nsc.Instance = nsc.InstantiateFn();
+							nsc.Instance->m_Entity = Entity{ entity, this };
+							nsc.Instance->OnCreate();
+						}
 
-					nsc.Instance->OnUpdate(ts);
-				});
-		}
+						nsc.Instance->OnUpdate(ts);
+					});
+			}
 
-		// Physics Update
-		{
-			const uint32_t velocityIterations = 6;
-			const uint32_t positionIterations = 2;
-
-			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
-
-			auto view = m_Registry.view<Rigidbody2DComponent>();
-			for (auto e : view)
+			// Physics Update
 			{
-				Entity entity = { e, this };
-				auto& transform = entity.GetComponent<TransformComponent>();
-				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+				const int32_t velocityIterations = 6;
+				const int32_t positionIterations = 2;
+				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
-				auto body = static_cast<b2Body*>(rb2d.RuntimeBody);
-				const auto& position = body->GetPosition();
-				transform.Translation.x = position.x;
-				transform.Translation.y = position.y;
-				transform.Rotation.z = body->GetAngle();
+				auto view = m_Registry.view<Rigidbody2DComponent>();
+				for (auto e : view)
+				{
+					Entity entity = { e, this };
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+
+					auto body = static_cast<b2Body*>(rb2d.RuntimeBody);
+					const auto& position = body->GetPosition();
+					transform.Translation.x = position.x;
+					transform.Translation.y = position.y;
+					transform.Rotation.z = body->GetAngle();
+				}
 			}
 		}
-
 
 		// Camera Update
 		Camera* mainCamera = nullptr;
@@ -202,10 +203,10 @@ namespace Hazel {
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
 	{
-		// Physics Update
+		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
-			const uint32_t velocityIterations = 6;
-			const uint32_t positionIterations = 2;
+			const int32_t velocityIterations = 6;
+			const int32_t positionIterations = 2;
 
 			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
@@ -342,6 +343,11 @@ namespace Hazel {
 				return Entity{ entity, this };
 		}
 		return {};
+	}
+
+	void Scene::Step(int frames)
+	{
+		m_StepFrames = frames;
 	}
 
 	void Scene::OnPhysics2DStart()
