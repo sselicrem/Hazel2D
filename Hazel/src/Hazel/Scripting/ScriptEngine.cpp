@@ -1,12 +1,16 @@
 #include "hzpch.h"
 #include "ScriptEngine.h"
 
-#include "ScriptGlue.h"
+#include "Hazel/Scripting/ScriptGlue.h"
+
+#include "Hazel/Core/Application.h"
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/tabledefs.h>
+
+#include <FileWatch.hpp>
 
 namespace Hazel {
 
@@ -141,11 +145,28 @@ namespace Hazel {
 		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
 		std::unordered_map<UUID, ScriptFieldMap> EntityScriptFields;
 
+		Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
+		bool AssemblyReloadPending = false;
+
 		// Runtime
 		Scene* SceneContext = nullptr;
 	};
 
 	static ScriptEngineData* s_ScriptEngineData = nullptr;
+
+	static void OnAppAssemblyFileSystemEvent(const std::string& path, const filewatch::Event change_type)
+	{
+		if (!s_ScriptEngineData->AssemblyReloadPending && change_type == filewatch::Event::modified)
+		{
+			s_ScriptEngineData->AssemblyReloadPending = true;
+
+			Application::Get().SubmitToMainThread([]()
+				{
+					s_ScriptEngineData->AppAssemblyFileWatcher.reset();
+					ScriptEngine::ReloadAssembly();
+				});
+		}
+	}
 
 	void ScriptEngine::Init()
 	{
@@ -162,38 +183,6 @@ namespace Hazel {
 
 		// Retrieve and instantiate class
 		s_ScriptEngineData->EntityClass = ScriptClass("Hazel", "Entity", true);
-#if 0
-	
-		MonoObject* instance = s_ScriptEngineData->EntityClass.Instantiate();
-	
-		// Call method
-		MonoMethod* printMessageFunc = s_ScriptEngineData->EntityClass.GetMethod("PrintMessage", 0);
-		s_ScriptEngineData->EntityClass.InvokeMethod(instance, printMessageFunc);
-
-		// Call method with param
-		MonoMethod* printIntFunc = s_ScriptEngineData->EntityClass.GetMethod("PrintInt", 1);
-
-		int value = 5;
-		void* param = &value;
-
-		s_ScriptEngineData->EntityClass.InvokeMethod(instance, printIntFunc, &param);
-
-		MonoMethod* printIntsFunc = s_ScriptEngineData->EntityClass.GetMethod("PrintInts", 2);
-		int value2 = 508;
-		void* params[2] =
-		{
-			&value,
-			&value2
-		};
-		s_ScriptEngineData->EntityClass.InvokeMethod(instance, printIntsFunc, params);
-
-		MonoString* monoString = mono_string_new(s_ScriptEngineData->AppDomain, "Hello World from C++!");
-		MonoMethod* printCustomMessageFunc = s_ScriptEngineData->EntityClass.GetMethod("PrintCustomMessage", 1);
-		void* stringParam = monoString;
-		s_ScriptEngineData->EntityClass.InvokeMethod(instance, printCustomMessageFunc, &stringParam);
-
-		HZ_CORE_ASSERT(false);
-#endif
 	}
 
 	void ScriptEngine::Shutdown()
@@ -247,6 +236,9 @@ namespace Hazel {
 		s_ScriptEngineData->AppAssemblyImage = mono_assembly_get_image(s_ScriptEngineData->AppAssembly);
 		auto assembi = s_ScriptEngineData->AppAssemblyImage;
 		// Utils::PrintAssemblyTypes(s_ScriptEngineData->AppAssembly);
+
+		s_ScriptEngineData->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(filepath.string(), OnAppAssemblyFileSystemEvent);
+		s_ScriptEngineData->AssemblyReloadPending = false;
 	}
 
 	void ScriptEngine::ReloadAssembly()

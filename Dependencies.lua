@@ -14,9 +14,10 @@ IncludeDir["glm"] = "%{wks.location}/Hazel/vendor/glm"
 IncludeDir["entt"] = "%{wks.location}/Hazel/vendor/entt/include"
 IncludeDir["shaderc"] = "%{wks.location}/Hazel/vendor/shaderc/include"
 IncludeDir["SPIRV_Cross"] = "%{wks.location}/Hazel/vendor/SPIRV-Cross"
-IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 IncludeDir["Box2D"] = "%{wks.location}/Hazel/vendor/Box2D/include"
 IncludeDir["mono"] = "%{wks.location}/Hazel/vendor/mono/include"
+IncludeDir["filewatch"] = "%{wks.location}/Hazel/vendor/filewatch"
+IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 
 LibraryDir = {}
 
