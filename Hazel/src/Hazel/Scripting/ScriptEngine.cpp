@@ -144,8 +144,18 @@ namespace Hazel {
 		InitMono();
 		ScriptGlue::RegisterFunctions();
 
-		LoadAssembly("Resources/Scripts/Hazel-ScriptCore.dll");
-		LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
+		bool status = LoadAssembly("Resources/Scripts/Hazel-ScriptCore.dll");
+		if (!status)
+		{
+			HZ_CORE_ERROR("[ScriptEngine] Could not load Hazel-ScriptCore assembly.");
+			return;
+		}
+		status = LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
+		if (!status)
+		{
+			HZ_CORE_ERROR("[ScriptEngine] Could not load app assembly.");
+			return;
+		}
 		LoadAssemblyClasses();
 
 		ScriptGlue::RegisterComponents();
@@ -182,32 +192,35 @@ namespace Hazel {
 		s_ScriptEngineData->RootDomain = nullptr;
 	}
 
-	void ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
+	bool ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
 	{
 		// Create an App Domain
 		s_ScriptEngineData->AppDomain = mono_domain_create_appdomain("HazelScriptRuntime", nullptr);
 		mono_domain_set(s_ScriptEngineData->AppDomain, true);
 
-		// Move this maybe
 		s_ScriptEngineData->CoreAssemblyFilepath = filepath;
 		s_ScriptEngineData->CoreAssembly = Utils::LoadMonoAssembly(filepath);
+		if (s_ScriptEngineData->CoreAssembly == nullptr)
+			return false;
+
 		s_ScriptEngineData->CoreAssemblyImage = mono_assembly_get_image(s_ScriptEngineData->CoreAssembly);
-		// Utils::PrintAssemblyTypes(s_ScriptEngineData->CoreAssembly);
+		
+		return true;
 	}
 
 
-	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
+	bool ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
-		// Move this maybe
 		s_ScriptEngineData->AppAssemblyFilepath = filepath;
 		s_ScriptEngineData->AppAssembly = Utils::LoadMonoAssembly(filepath);
-		auto assemb = s_ScriptEngineData->AppAssembly;
-		s_ScriptEngineData->AppAssemblyImage = mono_assembly_get_image(s_ScriptEngineData->AppAssembly);
-		auto assembi = s_ScriptEngineData->AppAssemblyImage;
-		// Utils::PrintAssemblyTypes(s_ScriptEngineData->AppAssembly);
+		if (s_ScriptEngineData->AppAssembly == nullptr)
+			return false;
 
+		s_ScriptEngineData->AppAssemblyImage = mono_assembly_get_image(s_ScriptEngineData->AppAssembly);
 		s_ScriptEngineData->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(filepath.string(), OnAppAssemblyFileSystemEvent);
 		s_ScriptEngineData->AssemblyReloadPending = false;
+
+		return true;
 	}
 
 	void ScriptEngine::ReloadAssembly()
@@ -260,10 +273,15 @@ namespace Hazel {
 	void ScriptEngine::OnUpdateEntity(Entity entity, Timestep ts)
 	{
 		UUID entityUUID = entity.GetUUID();
-		HZ_CORE_ASSERT(s_ScriptEngineData->EntityInstances.find(entityUUID) != s_ScriptEngineData->EntityInstances.end());
-
-		Ref<ScriptInstance> instance = s_ScriptEngineData->EntityInstances[entityUUID];
-		instance->InvokeOnUpdate((float)ts);
+		if (s_ScriptEngineData->EntityInstances.find(entityUUID) != s_ScriptEngineData->EntityInstances.end())
+		{
+			Ref<ScriptInstance> instance = s_ScriptEngineData->EntityInstances[entityUUID];
+			instance->InvokeOnUpdate((float)ts);
+		}
+		else
+		{
+			HZ_CORE_ERROR("Could not find ScriptInstance for entity {}", entityUUID);
+		}
 	}
 
 	Scene* ScriptEngine::GetSceneContext()
