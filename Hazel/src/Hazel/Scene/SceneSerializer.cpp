@@ -7,8 +7,6 @@
 #include "Hazel/Scripting/ScriptEngine.h"
 #include "Hazel/Core/UUID.h"
 
-#include <fstream>
-
 #include <yaml-cpp/yaml.h>
 
 namespace YAML {
