@@ -31,15 +31,21 @@ namespace Hazel
 		void OnDuplicateEntity();
 		void OnOverlayRender();
 
-		// UI Panels
-		void UI_ToolBar();
+		void NewProject();
+		bool OpenProject();
+		void OpenProject(const std::filesystem::path& path);
+		void SaveProject();
 
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
+
 		void SerializeScene(const std::filesystem::path& path);
-		void Save();
-		void SaveAs();
+		void SaveScene();
+		void SaveSceneAs();
+
+		// UI Panels
+		void UI_ToolBar();
 	private:
 		OrthographicCameraController m_CameraController;
 
@@ -80,7 +86,7 @@ namespace Hazel
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
-		ContentBrowserPanel m_ContentBrowserPanel;
+		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 
 		// Editor resources
 		Ref<Texture2D> m_IconPlay;

@@ -7,6 +7,8 @@
 #include "Hazel/Scripting/ScriptEngine.h"
 #include "Hazel/Core/UUID.h"
 
+#include "Hazel/Project/Project.h"
+
 #include <yaml-cpp/yaml.h>
 
 namespace YAML {
@@ -430,7 +432,11 @@ namespace Hazel {
 					auto& component = deserializedEntity.AddComponent<SpriteRendererComponent>();
 					component.Color = spriteComponent["Color"].as<glm::vec4>();
 					if (spriteComponent["TexturePath"])
-						component.Texture = Texture2D::Create(spriteComponent["TexturePath"].as<std::string>());
+					{
+						std::string texturePath = spriteComponent["TexturePath"].as<std::string>();
+						auto path = Project::GetAssetFileSystemPath(texturePath);
+						component.Texture = Texture2D::Create(path.string());
+					}
 
 					if (spriteComponent["TilingFactor"])
 						component.TilingFactor = spriteComponent["TilingFactor"].as<float>();

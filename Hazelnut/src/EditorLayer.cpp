@@ -41,8 +41,17 @@ namespace Hazel {
 		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
 		{
-			auto sceneFilePath = commandLineArgs[1];
-			OpenScene(sceneFilePath);
+			auto projectFilePath = commandLineArgs[1];
+			OpenProject(projectFilePath);
+		}
+		else
+		{
+			// NewProject();
+
+			// If no project is opened, close Hazelnut
+			// NOTE: this is while we don't have a new project path
+			if (!OpenProject())
+				Application::Get().Close();
 		}
 
 		m_EditorCamera = EditorCamera(30.f, 1.6f, 0.1f, 1000.f);
@@ -187,29 +196,21 @@ namespace Hazel {
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				// Disabling fullscreen would allow the window to be moved to the front of other windows, 
-				// which we can't undo at the moment without finer window depth/z control.
-				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
+				if (ImGui::MenuItem("Open Project...", "Ctrl+O"))
+					OpenProject();
 
-				if (ImGui::MenuItem("New", "Ctrl+N"))
-				{
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("New Scene", "Ctrl+N"))
 					NewScene();
-				}
 
-				if (ImGui::MenuItem("Open...", "Ctrl+O"))
-				{
-					OpenScene();
-				}
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+					SaveScene();
 
-				if (ImGui::MenuItem("Save", "Ctrl+S"))
-				{
-					Save();
-				}
+				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
+					SaveSceneAs();
 
-				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
-				{
-					SaveAs();
-				}
+				ImGui::Separator();
 
 				if (ImGui::MenuItem("Exit"))
 					Application::Get().Close();
@@ -229,7 +230,7 @@ namespace Hazel {
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
-		m_ContentBrowserPanel.OnImGuiRender();
+		m_ContentBrowserPanel->OnImGuiRender();
 
 		ImGui::Begin("Stats");
 
@@ -276,7 +277,7 @@ namespace Hazel {
 			if (auto payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 			{
 				const wchar_t* path = static_cast<wchar_t*>(payload->Data);
-				OpenScene(std::filesystem::path(g_AssetPath) /= path);
+				OpenScene(path);
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -390,7 +391,7 @@ namespace Hazel {
 			m_EditorScene->DuplicateEntity(entity);
 	}
 
-	void EditorLayer::OnOverlayRender()
+	void EditorLayer::OnOverlayRender()	
 	{
 		if (m_SceneState == SceneState::Play)
 		{
@@ -441,6 +442,37 @@ namespace Hazel {
 		}
 
 		Renderer2D::EndScene();
+	}
+
+	void EditorLayer::NewProject()
+	{
+		Project::New();
+
+	}
+
+	bool EditorLayer::OpenProject()
+	{
+		std::string filepath = FileDialogs::OpenFile("Hazel Project (*.hproj)\0*.hproj\0");
+		if (filepath.empty())
+			return false;
+
+		OpenProject(filepath);
+		return true;
+	}
+
+	void EditorLayer::OpenProject(const std::filesystem::path& path)
+	{
+		if (Project::Load(path))
+		{
+			auto startScenePath = Project::GetAssetFileSystemPath(Project::GetActive()->GetConfig().StartScene);
+			OpenScene(startScenePath);
+			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+		}
+	}
+
+	void EditorLayer::SaveProject()
+	{
+		// Project::SaveActive();
 	}
 
 	void EditorLayer::UI_ToolBar()
@@ -575,7 +607,7 @@ namespace Hazel {
 		{
 			if (controlPressed)
 			{
-				OpenScene();
+				OpenProject();
 			}
 			break;
 		}
@@ -584,9 +616,9 @@ namespace Hazel {
 			if (controlPressed)
 			{
 				if (shiftPressed)
-					SaveAs();
+					SaveSceneAs();
 				else
-					Save();
+					SaveScene();
 			}
 			break;
 		}
@@ -681,15 +713,15 @@ namespace Hazel {
 		serializer.Serialize(path.string());
 	}
 
-	void EditorLayer::Save()
+	void EditorLayer::SaveScene()
 	{
 		if (!m_ActiveScenePath.empty())
 			SerializeScene(m_ActiveScenePath);
 		else
-			SaveAs();
+			SaveSceneAs();
 	}
 
-	void EditorLayer::SaveAs()
+	void EditorLayer::SaveSceneAs()
 	{
 		std::string filepath = FileDialogs::SaveFile("Hazel Scene (*.hazel)\0*.hazel\0");
 		if (!filepath.empty())
