@@ -35,7 +35,7 @@ namespace Hazel {
 		Entity CreateEntity(const std::string& name = "Entity");
 		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = "Entity");
 		void DestroyEntity(Entity entity);
-		void DuplicateEntity(Entity entity);
+		Entity DuplicateEntity(Entity entity);
 
 		Entity FindEntityByName(std::string_view name);
 		Entity GetEntityByUUID(UUID uuid);

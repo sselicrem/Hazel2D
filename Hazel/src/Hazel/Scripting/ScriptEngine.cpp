@@ -7,6 +7,8 @@
 #include "Hazel/Core/Buffer.h"
 #include "Hazel/Core/FileSystem.h"
 
+#include "Hazel/Project/Project.h"
+
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/object.h>
@@ -150,7 +152,8 @@ namespace Hazel {
 			HZ_CORE_ERROR("[ScriptEngine] Could not load Hazel-ScriptCore assembly.");
 			return;
 		}
-		status = LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
+		auto scriptModulePath = Project::GetAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
+		status = LoadAppAssembly(scriptModulePath);
 		if (!status)
 		{
 			HZ_CORE_ERROR("[ScriptEngine] Could not load app assembly.");
