@@ -45,7 +45,9 @@ project "Hazel"
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.Box2D}",
 		"%{IncludeDir.mono}",
-		"%{IncludeDir.filewatch}"
+		"%{IncludeDir.filewatch}",
+		"%{IncludeDir.msdfgen}",
+		"%{IncludeDir.msdf_atlas_gen}"
 	}
 
 	links
@@ -56,6 +58,7 @@ project "Hazel"
 		"opengl32.lib",
 		"yaml-cpp",
 		"Box2D",
+		"msdf-atlas-gen",
 		"%{Library.mono}"
 	}
 

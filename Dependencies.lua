@@ -18,6 +18,8 @@ IncludeDir["Box2D"] = "%{wks.location}/Hazel/vendor/Box2D/include"
 IncludeDir["mono"] = "%{wks.location}/Hazel/vendor/mono/include"
 IncludeDir["filewatch"] = "%{wks.location}/Hazel/vendor/filewatch"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
+IncludeDir["msdfgen"] = "%{wks.location}/Hazel/vendor/msdf-atlas-gen/msdfgen"
+IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Hazel/vendor/msdf-atlas-gen/msdf-atlas-gen"
 
 LibraryDir = {}
 
