@@ -25,7 +25,7 @@ namespace Hazel {
 					msdfgen::Bitmap<float, 3> msdf(32, 32);
 					//                     range, scale, translation
 					msdfgen::generateMSDF(msdf, shape, 4.0, 1.0, msdfgen::Vector2(4.0, 4.0));
-					msdfgen::savePng(msdf, "output.png");
+					msdfgen::savePng(msdf, "outputFontOpenSans.png");
 				}
 				msdfgen::destroyFont(font);
 			}
